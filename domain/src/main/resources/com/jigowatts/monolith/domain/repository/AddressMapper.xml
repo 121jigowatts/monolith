@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jigowatts.monolith.domain.repository.AddressMapper">
+
+    <resultMap id="AddressResultMap" type="com.jigowatts.monolith.domain.model.Address">
+        <id column="prefecture_code" jdbcType="VARCHAR" property="prefectureCode" />
+        <id column="city_code" jdbcType="VARCHAR" property="cityCode" />
+        <id column="street_code" jdbcType="VARCHAR" property="streetCode" />
+        <result column="prefecture" jdbcType="VARCHAR" property="prefecture" />
+        <result column="prefecture_kana" jdbcType="VARCHAR" property="prefectureKana" />
+        <result column="prefecture_roma" jdbcType="VARCHAR" property="prefectureRoma" />
+        <result column="city" jdbcType="VARCHAR" property="city" />
+        <result column="city_kana" jdbcType="VARCHAR" property="cityKana" />
+        <result column="city_roma" jdbcType="VARCHAR" property="cityRoma" />
+        <result column="street" jdbcType="VARCHAR" property="street" />
+        <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+        <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+    </resultMap>
+    <select id="search" parameterType="String" resultMap="AddressResultMap">
+        SELECT
+            prefecture_code,
+            prefecture,
+            prefecture_kana,
+            prefecture_roma,
+            city_code,
+            city,
+            city_kana,
+            city_roma,
+            street_code,
+            street,
+            latitude,
+            longitude
+        FROM
+            address
+        <where>
+            <if test="prefectureCode != null">
+                AND prefecture_code LIKE #{prefectureCode} || '%'
+            </if>
+            <if test="prefecture != null">
+                AND prefecture LIKE #{prefecture} || '%'
+            </if>
+            <if test="prefectureKana != null">
+                AND prefecture_kana LIKE #{prefectureKana} || '%'
+            </if>
+            <if test="prefectureRoma != null">
+                AND prefecture_roma LIKE #{prefectureRoma} || '%'
+            </if>
+
+            <if test="cityCode != null">
+                AND city_code LIKE #{cityCode} || '%'
+            </if>
+            <if test="city != null">
+                AND city LIKE #{city} || '%'
+            </if>
+            <if test="cityKana != null">
+                AND city_kana LIKE #{cityKana} || '%'
+            </if>
+            <if test="cityRoma != null">
+                AND city_roma LIKE #{cityRoma} || '%'
+            </if>
+
+            <if test="streetCode != null">
+                AND street_code LIKE #{streetCode} || '%'
+            </if>
+            <if test="street != null">
+                AND street LIKE #{street} || '%'
+            </if>
+
+            <if test="latitude != null">
+                AND latitude LIKE #{latitude} || '%'
+            </if>
+            <if test="longitude != null">
+                AND longitude LIKE #{longitude} || '%'
+            </if>
+        </where>
+        ORDER BY
+            prefecture_code,
+            city_code,
+            street_code
+    </select>
+
+    <insert id="save">
+        INSERT INTO address (
+            prefecture_code,
+            prefecture,
+            prefecture_kana,
+            prefecture_roma,
+            city_code,
+            city,
+            city_kana,
+            city_roma,
+            street_code,
+            street,
+            latitude,
+            longitude,
+            create_at,
+            create_by,
+            update_at,
+            update_by
+        )
+        VALUES (
+            #{prefectureCode},
+            #{prefecture},
+            #{prefectureKana},
+            #{prefectureRoma},
+            #{cityCode},
+            #{city},
+            #{cityKana},
+            #{cityRoma},
+            #{streetCode},
+            #{street},
+            #{latitude},
+            #{longitude},
+            #{createAt},
+            #{createBy},
+            #{updateAt},
+            #{updateBy}
+        );
+    </insert>
+
+    <delete id="delete">
+        delete from address
+    </delete>
+</mapper>
