@@ -15,6 +15,10 @@
         <result column="street" jdbcType="VARCHAR" property="street" />
         <result column="latitude" jdbcType="VARCHAR" property="latitude" />
         <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+        <result column="create_at" jdbcType="VARCHAR" property="createAt" />
+        <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+        <result column="update_at" jdbcType="VARCHAR" property="updateAt" />
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     </resultMap>
     <select id="search" parameterType="String" resultMap="AddressResultMap">
         SELECT
@@ -29,7 +33,11 @@
             street_code,
             street,
             latitude,
-            longitude
+            longitude,
+            create_at,
+            create_by,
+            update_at,
+            update_by
         FROM
             address
         <where>

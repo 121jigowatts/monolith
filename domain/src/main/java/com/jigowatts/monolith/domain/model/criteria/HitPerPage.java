@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class HitPerPage {
     private int value;
+    private static final String NAME = "hit_per_page";
 
     public HitPerPage(String value) {
         if (value == null || value.isEmpty()) {
@@ -13,11 +14,11 @@ public class HitPerPage {
             try {
                 this.value = Integer.parseInt(value);
             } catch (Exception e) {
-                throw new IllegalArgumentException(value);
+                throw new IllegalArgumentException(NAME + "=" + value);
             }
 
             if (this.value > 100) {
-                throw new IllegalArgumentException(value);
+                throw new IllegalArgumentException(NAME + "=" + value);
             }
         }
     }
