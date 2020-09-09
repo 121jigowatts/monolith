@@ -1,0 +1,20 @@
+###
+GET http://localhost:8080/address
+
+###
+GET http://localhost:8080/address?hit_per_page=10&page_offset=aaa
+
+###
+GET http://localhost:8080/address?prefecture=東京都&city=千代田区&street=内幸町二丁目
+
+###
+GET http://localhost:8080/address?prefecture=神奈川県
+
+###
+GET http://localhost:8080/address?prefecture=北海道&hit_per_page=5&page_offset=2
+
+###
+GET http://localhost:8080/address?street_code=141020001002
+
+###
+GET http://localhost:8080/address?latitude=35&longitude=139
