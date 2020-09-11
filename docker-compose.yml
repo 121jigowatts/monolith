@@ -1,7 +1,19 @@
 version: '3'
 services:
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: Dockerfile_web
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
   db:
-    build: .
+    container_name: db
+    build:
+      context: .
+      dockerfile: Dockerfile_db
     ports:
       - 5433:5432
     environment:
