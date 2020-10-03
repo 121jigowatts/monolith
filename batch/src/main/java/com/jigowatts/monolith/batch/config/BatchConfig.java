@@ -1,5 +1,6 @@
 package com.jigowatts.monolith.batch.config;
 
+import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 
 import javax.sql.DataSource;
@@ -24,29 +25,32 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.jsr.JsrJobParametersConverter;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
-// import org.springframework.core.io.UrlResource;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.UrlResource;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
+@PropertySource("classpath:batch.properties")
 public class BatchConfig {
     private final JobBuilderFactory jobBUilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final SqlSessionFactory sqlSessionFactory;
     private final DataSource dataSource;
 
-    private static final String WILL_BE_INJECTED = null;
+    @Bean
+    public BatchContext context() {
+        return new BatchContext();
+    }
 
     @Bean
     public Tasklet cleanTask() {
@@ -60,13 +64,13 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<InputAddress> reader(@Value("#{jobParameters['inputFile']}") String filePath)
-            throws UnexpectedInputException, ParseException {
-        // String path = "";
+    public FlatFileItemReader<InputAddress> reader() throws MalformedURLException {
+
+        String url = context().getUrl();
+        log.info("-----> Download from {}", url);
 
         FlatFileItemReader<InputAddress> reader = new FlatFileItemReader<>();
-        // reader.setResource(new UrlResource(path));
-        reader.setResource(new FileSystemResource(filePath));
+        reader.setResource(new UrlResource(url));
         reader.setLinesToSkip(1);
 
         DefaultLineMapper<InputAddress> lineMapper = new DefaultLineMapper<>();
@@ -96,8 +100,8 @@ public class BatchConfig {
     }
 
     @Bean
-    public Step dataLoadStep() {
-        return stepBuilderFactory.get("dataLoadStep").<InputAddress, Address>chunk(1000).reader(reader(WILL_BE_INJECTED))
+    public Step dataLoadStep() throws MalformedURLException {
+        return stepBuilderFactory.get("dataLoadStep").<InputAddress, Address>chunk(1000).reader(reader())
                 .processor(processor()).writer(writer()).listener(stepListener()).build();
     }
 
@@ -107,7 +111,7 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job job() {
+    public Job job() throws MalformedURLException {
         return jobBUilderFactory.get("job").listener(jobListener()).start(cleanStep()).next(dataLoadStep()).build();
     }
 
