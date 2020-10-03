@@ -6,7 +6,7 @@
 
 ```sh
 # ビルドしなおしたら、--no-cache をつける
-docker-comose build
+docker-compose build
 docker-compose up -d
 ```
 
